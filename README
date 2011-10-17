@@ -4,3 +4,7 @@ Experimental addon to encode RGB data into a vp8/webm encoded video using raw rg
 It works on Mac, not yet on linux/windows.
 
 
+How to use
+----------
+Create a ofxWebm object and call addFrame() after you've drawn everything you want to write into a video file. There is something with the database where the videos are stored.
+
