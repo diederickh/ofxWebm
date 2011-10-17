@@ -1,0 +1,6 @@
+ofxWebm
+-------
+Experimental addon to encode RGB data into a vp8/webm encoded video using raw rgb pixels. 
+It works on Mac, not yet on linux/windows.
+
+
