@@ -32,17 +32,21 @@ public:
 	
 	// ivf test
 	
+	 void enableRecording();
+	 void disableRecording();
+	 void toggleRecording();
+	 bool isRecordingEnabled();	
 	
 private:
 	void setBasePath();
 	string getBasePath();
 	void setNumberOfWebmFiles();
-	
 	string getNewMovieFilePath();
 	string getFFMPEG();
+
 	int width;
 	int height;
-	
+	bool enable_recording;
 	uint8_t* out_buffer;
 	uint8_t* in_buffer;
 //	AVFrame* in_pic;

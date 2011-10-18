@@ -75,32 +75,30 @@ static void write_ivf_file_header(FILE *outfile,
 
 ofxWebm::ofxWebm() 
 :number_of_webm_files(0)
+,enable_recording(true)
 {
 	setNumberOfWebmFiles();
 	setBasePath();
 }
 
 ofxWebm::~ofxWebm() {
-    if(!fseek(fp, 0, SEEK_SET)) {
-        write_ivf_file_header(fp, &cfg, frame_cnt-1);
+	if(frame_cnt > 0) {
+		if(!fseek(fp, 0, SEEK_SET)) {
+			write_ivf_file_header(fp, &cfg, frame_cnt-1);
+		}
+		string output_file = getNewMovieFilePath() +".webm";
+		string input_file =  getNewMovieFilePath() +".ivf";
+		string cmd = getFFMPEG() +" -i " +input_file +" -vcodec copy " +output_file;
+		system(cmd.c_str());	
 	}
-    fclose(fp);
 
 	vpx_img_free(in_image);
 	vpx_img_free(out_image);
-	fclose(fp);
-	
+	fclose(fp);	
 	vpx_codec_destroy(&codec);
-	
-	string output_file = getNewMovieFilePath() +".webm";
-	string input_file =  getNewMovieFilePath() +".ivf";
-	string cmd = getFFMPEG() +" -i " +input_file +" -vcodec copy " +output_file;
-	system(cmd.c_str());
-
 }
 
 void ofxWebm::setup(int w, int h) {
-
 	flags = 0;
 	frame_cnt = 0;
 	width = w;
@@ -162,6 +160,9 @@ void ofxWebm::addFrame() {
 
 // create a buffer in yuv format
 void ofxWebm::addFrameUsingPixels(unsigned char* pixels) {
+	if(!enable_recording) {
+		return ;
+	}
 	struct SwsContext* convert_context = sws_getContext(
 		width
 		,height
@@ -220,6 +221,7 @@ void ofxWebm::addFrameUsingPixels(unsigned char* pixels) {
 	}
 	
 	frame_cnt++;
+	
 }
 
 string ofxWebm::getNewMovieFilePath() {
@@ -249,4 +251,17 @@ void ofxWebm::setNumberOfWebmFiles() {
 	Poco::Glob::glob(dp, files);
 	std:set<std::string>::iterator it = files.begin();
 	number_of_webm_files = files.size();
+}
+
+void ofxWebm::enableRecording() {
+	enable_recording = true;
+}
+void ofxWebm::disableRecording() {
+	enable_recording = false;
+}
+void ofxWebm::toggleRecording() {
+	enable_recording = !enable_recording;
+}
+bool ofxWebm::isRecordingEnabled() {
+	return enable_recording;
 }
